@@ -84,7 +84,7 @@ const testResult = {
 };
 
 export function ResumeWrapper() {
-  const [result, setResult] = useState<FeedbackResults | null>(testResult);
+  const [result, setResult] = useState<FeedbackResults | null>();
   const [error, setError] = useState<{ message: string } | null>(null);
 
   return (
