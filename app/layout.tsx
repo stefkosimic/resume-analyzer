@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { Public_Sans } from "next/font/google";
+import { Metadata } from "next";
 
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
@@ -8,12 +8,34 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
 import "./globals.css";
-import { Metadata } from "next";
 
 const publicSans = Public_Sans({ subsets: ["latin"] });
 
 export const generateMetadata = (): Metadata => ({
-  title: "ResumeAnalyzer",
+  title: "ResumeAnalyzer - AI-Powered Resume Feedback",
+  description:
+    "Get instant feedback, optimize your resume, and boost your chances of landing your dream job.",
+  keywords: [
+    "resume feedback",
+    "AI resume analyzer",
+    "resume optimization",
+    "job application tips",
+  ],
+  openGraph: {
+    title: "ResumeAnalyzer - AI-Powered Resume Feedback",
+    description:
+      "Optimize your resume with AI insights and improve your job prospects.",
+    url: "https://resumeai.simicdev.com",
+    type: "website",
+    images: [
+      {
+        url: "https://resumeai.simicdev.com/opengraph-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "ResumeAnalyzer preview",
+      },
+    ],
+  },
 });
 
 export default function RootLayout({
@@ -29,10 +51,10 @@ export default function RootLayout({
       <body className={publicSans.className}>
         <NuqsAdapter>
           <ThemeProvider
-            defaultTheme="light"
+            defaultTheme="dark"
             themes={["light", "dark"]}
             attribute="class"
-            enableSystem={false}
+            enableSystem={true}
           >
             {children}
             <div className="fixed bottom-4 right-4">

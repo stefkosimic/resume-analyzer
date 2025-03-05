@@ -61,28 +61,6 @@ export default function ResumeAnalyzerJumbotron() {
                 </motion.span>
               </Button>
             </motion.div>
-
-            {/* Metrics Cards */}
-            <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-3">
-              <MetricCard
-                title="Readability & Clarity"
-                percentage={85}
-                icon={<FileText className="h-5 w-5 text-chart1" />}
-                color="chart1"
-              />
-              <MetricCard
-                title="Job Relevance"
-                percentage={100}
-                icon={<BarChart className="h-5 w-5 text-chart2" />}
-                color="chart2"
-              />
-              <MetricCard
-                title="Grammar & Language"
-                percentage={50}
-                icon={<Award className="h-5 w-5 text-chart3" />}
-                color="chart3"
-              />
-            </div>
           </div>
         </div>
       </div>
