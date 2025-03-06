@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { addNewContact } from "@/utils/brevo";
+import { addNewContact, sendEmail } from "@/utils/brevo";
 
 export default function SubscribeSection() {
   const [email, setEmail] = useState("");
@@ -15,6 +15,12 @@ export default function SubscribeSection() {
     console.log("Subscribed:", email);
     setEmail("");
     alert("Thanks for subscribing! We'll notify you when a new tool is out.");
+  };
+  const handleEmail = async () => {
+    await sendEmail({ email });
+    // console.log("Subscribed:", email);
+    // setEmail("");
+    // alert("Thanks for subscribing! We'll notify you when a new tool is out.");
   };
 
   return (
@@ -36,6 +42,9 @@ export default function SubscribeSection() {
         />
         <Button variant="secondary" onClick={handleSubscribe}>
           Subscribe
+        </Button>
+        <Button variant="secondary" onClick={handleEmail}>
+          Test
         </Button>
       </div>
       <p className="mt-4 text-sm">No spam. Unsubscribe anytime.</p>
