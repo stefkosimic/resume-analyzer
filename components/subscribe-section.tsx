@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { addNewContact, sendEmail } from "@/utils/brevo";
+import { addNewContact } from "@/utils/brevo";
 
 export default function SubscribeSection() {
   const [email, setEmail] = useState("");
@@ -12,15 +12,8 @@ export default function SubscribeSection() {
     // TODO: Integrate with your email marketing tool (e.g., Mailchimp, ConvertKit, Supabase, etc.)
 
     await addNewContact({ email });
-    console.log("Subscribed:", email);
     setEmail("");
     alert("Thanks for subscribing! We'll notify you when a new tool is out.");
-  };
-  const handleEmail = async () => {
-    await sendEmail({ email });
-    // console.log("Subscribed:", email);
-    // setEmail("");
-    // alert("Thanks for subscribing! We'll notify you when a new tool is out.");
   };
 
   return (

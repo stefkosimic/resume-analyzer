@@ -2,35 +2,14 @@
 
 import type React from "react";
 import { useState, useCallback } from "react";
-import {
-  Upload,
-  CheckCircle,
-  FileText,
-  Zap,
-  Award,
-  BarChart,
-  Cloud,
-  Loader2,
-} from "lucide-react";
+import { Upload, CheckCircle, FileText, Zap, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 import { useResume } from "@/contexts/resume-context";
-import { cn } from "@/utils/cn";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-    },
-  },
-};
 
 const item = {
   hidden: { opacity: 0, y: 20 },

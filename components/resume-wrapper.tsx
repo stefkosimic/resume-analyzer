@@ -1,13 +1,11 @@
 "use client";
 
-import { StickToBottom } from "use-stick-to-bottom";
+import { useResume } from "@/contexts/resume-context";
 import { Download, Loader2, Check } from "lucide-react";
-import { cn } from "@/utils/cn";
 import { ChartPie } from "./charts/pie";
 import { Button } from "./ui/button";
 import { FeedbackResults } from "@/types";
 import { toast } from "sonner";
-import { useResume } from "@/contexts/resume-context";
 
 const ChartsResults = ({ result }: { result: FeedbackResults }) => {
   if (!result?.overall_score) return <>{result?.summary}</>;

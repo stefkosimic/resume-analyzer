@@ -1,5 +1,5 @@
+"use client";
 import Link from "next/link";
-import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { Sparkles } from "lucide-react";
 import Image from "next/image";

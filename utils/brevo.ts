@@ -17,8 +17,6 @@ export const addNewContact = async ({ email }: { email: string }) => {
   });
 
   const responseData = await response.json();
-  console.log("responseData", responseData);
-
   return responseData;
 };
 
@@ -38,7 +36,5 @@ export const sendEmail = async ({ email }: { email: string }) => {
   });
 
   const responseData = await response.json();
-  console.log("responseData", responseData);
-
   return responseData;
 };

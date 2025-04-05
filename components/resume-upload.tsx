@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Upload, Loader2 } from "lucide-react";
+import { Upload } from "lucide-react";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { useResume } from "@/contexts/resume-context";
