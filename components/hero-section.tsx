@@ -120,6 +120,7 @@ export default function ResumeAnalyzerJumbotron() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
+              {/* @ts-ignore */}
               <motion.div
                 {...getRootProps()}
                 className={`relative flex h-[400px] w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed transition-all duration-200 ${
