@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   Upload,
   CheckCircle,
@@ -10,17 +10,58 @@ import {
   Award,
   BarChart,
   Cloud,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useDropzone } from "react-dropzone";
+import { toast } from "sonner";
+import { useResume } from "@/contexts/resume-context";
+import { cn } from "@/utils/cn";
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+    },
+  },
+};
 
 export default function ResumeAnalyzerJumbotron() {
-  const [isHovering, setIsHovering] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { analyzeResume, isLoading } = useResume();
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+    if (!file) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error("File size exceeds 5MB limit");
+      return;
+    }
+
+    setSelectedFile(file);
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
     accept: {
       "application/pdf": [".pdf"],
       "application/msword": [".doc"],
@@ -28,100 +69,219 @@ export default function ResumeAnalyzerJumbotron() {
         [".docx"],
     },
     maxFiles: 1,
-    onDragEnter: () => setIsDragging(true),
-    onDragLeave: () => setIsDragging(false),
-    onDrop: () => setIsDragging(false),
   });
 
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+
+    try {
+      await analyzeResume(selectedFile);
+      setSelectedFile(null);
+    } catch (error) {
+      setSelectedFile(null);
+    }
+  };
+
   return (
-    <div className="relative overflow-hidden bg-gradient-to-b from-background to-muted">
+    <motion.div
+      className="relative overflow-hidden bg-gradient-to-b from-background to-muted"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-primary/20 blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-secondary/20 blur-3xl"></div>
-      </div>
+      <motion.div
+        className="absolute inset-0 overflow-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
+        <motion.div
+          className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-primary/20 blur-3xl"
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        />
+        <motion.div
+          className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-secondary/20 blur-3xl"
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+        />
+      </motion.div>
 
       <div className="container relative mx-auto px-4 py-16 sm:px-6 sm:py-24 lg:py-32">
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
             {/* Left side - Drag and Drop */}
-            <div className="flex flex-col items-center justify-center">
-              <div
+            <motion.div
+              className="flex flex-col items-center justify-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <motion.div
                 {...getRootProps()}
                 className={`relative flex h-[400px] w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed transition-all duration-200 ${
                   isDragActive
                     ? "border-primary bg-primary/5"
                     : "border-muted-foreground/25 hover:border-primary/50"
                 }`}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
               >
                 <input {...getInputProps()} />
-                <div className="flex flex-col items-center gap-4 text-center">
-                  <div className="rounded-full bg-primary/10 p-4">
-                    <Cloud className="h-8 w-8 text-primary" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="text-xl font-semibold">
-                      {isDragActive
-                        ? "Drop your resume here"
-                        : "Drag & drop your resume"}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
+                <motion.div
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                  <motion.p
+                    className="text-lg flex flex-col text-center font-medium mb-2"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    {isDragActive
+                      ? "Drop your resume here"
+                      : "Drag & drop your resume"}
+
+                    <span className="text-xs text-muted-foreground/60">
                       or click to browse files
-                    </p>
+                    </span>
+                    <span className="text-xs text-muted-foreground/60">
+                      Supported formats: PDF, DOC, DOCX (max 5MB)
+                    </span>
+                  </motion.p>
+
+                  <motion.div
+                    className="text-xs text-muted-foreground/60"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                  ></motion.div>
+                </motion.div>
+              </motion.div>
+
+              {selectedFile && (
+                <motion.div
+                  className="mt-6 space-y-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ type: "spring", stiffness: 200 }}
+                >
+                  <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                    <div>
+                      <p className="font-medium">{selectedFile.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                    </div>
+                    <div className="flex gap-2 items-center">
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <Button
+                          className="gap-2"
+                          onClick={handleUpload}
+                          disabled={isLoading}
+                        >
+                          {isLoading ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              Analyzing...
+                            </>
+                          ) : (
+                            "Upload and Analyze"
+                          )}
+                        </Button>
+                      </motion.div>
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setSelectedFile(null)}
+                          className="h-9 w-9"
+                        >
+                          <motion.div
+                            initial={{ rotate: 0 }}
+                            whileHover={{ rotate: 90 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            ✕
+                          </motion.div>
+                        </Button>
+                      </motion.div>
+                    </div>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Supported formats: PDF, DOC, DOCX
-                  </p>
-                </div>
-              </div>
-            </div>
+                </motion.div>
+              )}
+            </motion.div>
 
             {/* Right side - Content */}
-            <div className="flex flex-col items-start justify-center space-y-8">
-              <div className="flex items-center gap-2">
-                <Image alt="logo" src="/logo.svg" width={50} height={50} />
-                <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
-                  Resume
-                  <span className="text-primary">Analyzer</span>
-                </h1>
-              </div>
+            <motion.div
+              className="flex flex-col items-start justify-center space-y-8"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <motion.div
+                className="mx-auto max-w-2xl text-center"
+                variants={item}
+              >
+                <motion.h1
+                  className="text-4xl font-bold tracking-tight sm:text-6xl"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  Optimize Your <span className="text-gradient">Resume</span>{" "}
+                  with AI
+                </motion.h1>
+                <motion.p
+                  className="mt-6 text-lg leading-8 text-muted-foreground"
+                  variants={item}
+                >
+                  Get instant feedback on your resume. Our AI-powered analysis
+                  helps you improve your chances of landing your dream job.
+                </motion.p>
+              </motion.div>
 
-              <div className="space-y-4">
-                <h2 className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
-                  AI-Powered Resume Feedback
-                </h2>
-
-                <p className="text-xl text-muted-foreground">
-                  Get instant feedback, optimize your resume, and boost your
-                  chances of landing your dream job.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <motion.div
+                className="grid grid-cols-1 gap-4 sm:grid-cols-3"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
                 <MetricCard
-                  title="ATS Score"
-                  percentage={95}
-                  icon={<FileText className="h-4 w-4 text-chart1" />}
+                  title="Resume Score"
+                  percentage={85}
+                  icon={<CheckCircle className="h-6 w-6 text-primary" />}
                   color="chart1"
                 />
                 <MetricCard
-                  title="Keyword Match"
-                  percentage={88}
-                  icon={<CheckCircle className="h-4 w-4 text-chart2" />}
+                  title="Job Match"
+                  percentage={75}
+                  icon={<FileText className="h-6 w-6 text-primary" />}
                   color="chart2"
                 />
                 <MetricCard
-                  title="Impact Score"
-                  percentage={92}
-                  icon={<Award className="h-4 w-4 text-chart3" />}
+                  title="Application Rate"
+                  percentage={90}
+                  icon={<Zap className="h-6 w-6 text-primary" />}
                   color="chart3"
                 />
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -135,23 +295,17 @@ interface MetricCardProps {
 function MetricCard({ title, percentage, icon, color }: MetricCardProps) {
   const colorMap = {
     chart1: {
-      bg: "bg-chart1/10",
       ring: "ring-chart1/20",
-      text: "text-chart1",
       progressBg: "bg-chart1/20",
       progressFill: "bg-chart1",
     },
     chart2: {
-      bg: "bg-chart2/10",
       ring: "ring-chart2/20",
-      text: "text-chart2",
       progressBg: "bg-chart2/20",
       progressFill: "bg-chart2",
     },
     chart3: {
-      bg: "bg-chart3/10",
       ring: "ring-chart3/20",
-      text: "text-chart3",
       progressBg: "bg-chart3/20",
       progressFill: "bg-chart3",
     },
@@ -161,18 +315,18 @@ function MetricCard({ title, percentage, icon, color }: MetricCardProps) {
 
   return (
     <div
-      className={`relative overflow-hidden rounded-xl ${styles.bg} p-6 ring-1 ${styles.ring} transition-all duration-200 hover:shadow-lg`}
+      className={`relative overflow-hidden rounded-xl card-gradient-dark border p-4 ring-1 ${styles.ring} transition-all duration-200`}
     >
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="font-medium text-foreground">{title}</h3>
+      <div className="mb-4 flex items-center w-full gap-4 justify-between">
+        <h2 className="font-medium text-sm text-foreground">{title}</h2>
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-card shadow-sm">
           {icon}
         </span>
       </div>
 
       <div className="mb-2 flex items-end justify-between">
-        <div className={`text-4xl font-bold ${styles.text}`}>{percentage}%</div>
-        <Zap className="h-5 w-5 text-accent" />
+        <div className={`text-4xl font-bold`}>{percentage}%</div>
+        <Zap className="h-5 w-5 text-primary" />
       </div>
 
       <div

@@ -6,6 +6,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/Navbar";
+import { ResumeProvider } from "@/contexts/resume-context";
 import "./globals.css";
 
 const publicSans = Public_Sans({ subsets: ["latin"] });
@@ -55,11 +56,13 @@ export default function RootLayout({
             attribute="class"
             enableSystem={true}
           >
-            <div className="relative min-h-screen flex flex-col">
-              <Navbar />
-              <main className="flex-1">{children}</main>
-              <Toaster />
-            </div>
+            <ResumeProvider>
+              <div className="relative min-h-screen flex flex-col">
+                <Navbar />
+                <main className="flex-1">{children}</main>
+                <Toaster />
+              </div>
+            </ResumeProvider>
           </ThemeProvider>
         </NuqsAdapter>
       </body>

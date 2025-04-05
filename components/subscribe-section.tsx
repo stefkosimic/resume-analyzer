@@ -40,12 +40,7 @@ export default function SubscribeSection() {
           onChange={(e) => setEmail(e.target.value)}
           className="w-full px-4 py-2 rounded-lg"
         />
-        <Button variant="secondary" onClick={handleSubscribe}>
-          Subscribe
-        </Button>
-        <Button variant="secondary" onClick={handleEmail}>
-          Test
-        </Button>
+        <Button onClick={handleSubscribe}>Subscribe</Button>
       </div>
       <p className="mt-4 text-sm">No spam. Unsubscribe anytime.</p>
     </section>
