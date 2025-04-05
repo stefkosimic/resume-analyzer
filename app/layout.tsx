@@ -1,12 +1,11 @@
 import { Public_Sans } from "next/font/google";
 import { Metadata } from "next";
-
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 // components
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { Navbar } from "@/components/Navbar";
 import "./globals.css";
 
 const publicSans = Public_Sans({ subsets: ["latin"] });
@@ -56,11 +55,11 @@ export default function RootLayout({
             attribute="class"
             enableSystem={true}
           >
-            {children}
-            <div className="fixed bottom-4 right-4">
-              <ThemeToggle />
+            <div className="relative min-h-screen flex flex-col">
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Toaster />
             </div>
-            <Toaster />
           </ThemeProvider>
         </NuqsAdapter>
       </body>

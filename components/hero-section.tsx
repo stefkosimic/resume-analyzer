@@ -9,13 +9,29 @@ import {
   Zap,
   Award,
   BarChart,
+  Cloud,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useDropzone } from "react-dropzone";
 
 export default function ResumeAnalyzerJumbotron() {
   const [isHovering, setIsHovering] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: {
+      "application/pdf": [".pdf"],
+      "application/msword": [".doc"],
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        [".docx"],
+    },
+    maxFiles: 1,
+    onDragEnter: () => setIsDragging(true),
+    onDragLeave: () => setIsDragging(false),
+    onDrop: () => setIsDragging(false),
+  });
 
   return (
     <div className="relative overflow-hidden bg-gradient-to-b from-background to-muted">
@@ -26,41 +42,82 @@ export default function ResumeAnalyzerJumbotron() {
       </div>
 
       <div className="container relative mx-auto px-4 py-16 sm:px-6 sm:py-24 lg:py-32">
-        <div className="mx-auto max-w-5xl">
-          {/* Logo and title section */}
-          <div className="flex flex-col items-center text-center">
-            <div className="mb-6 flex items-center gap-2">
-              <Image alt="logo" src="/logo.svg" width={50} height={50} />
-              <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl md:text-5xl">
-                Resume
-                <span className="text-primary">Analyzer</span>
-              </h1>
+        <div className="mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+            {/* Left side - Drag and Drop */}
+            <div className="flex flex-col items-center justify-center">
+              <div
+                {...getRootProps()}
+                className={`relative flex h-[400px] w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed transition-all duration-200 ${
+                  isDragActive
+                    ? "border-primary bg-primary/5"
+                    : "border-muted-foreground/25 hover:border-primary/50"
+                }`}
+              >
+                <input {...getInputProps()} />
+                <div className="flex flex-col items-center gap-4 text-center">
+                  <div className="rounded-full bg-primary/10 p-4">
+                    <Cloud className="h-8 w-8 text-primary" />
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-xl font-semibold">
+                      {isDragActive
+                        ? "Drop your resume here"
+                        : "Drag & drop your resume"}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      or click to browse files
+                    </p>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Supported formats: PDF, DOC, DOCX
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <h2 className="mb-6 inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
-              AI-Powered Resume Feedback
-            </h2>
+            {/* Right side - Content */}
+            <div className="flex flex-col items-start justify-center space-y-8">
+              <div className="flex items-center gap-2">
+                <Image alt="logo" src="/logo.svg" width={50} height={50} />
+                <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
+                  Resume
+                  <span className="text-primary">Analyzer</span>
+                </h1>
+              </div>
 
-            <p className="mb-10 max-w-2xl text-center text-lg text-muted-foreground sm:text-xl">
-              Get instant feedback, optimize your resume, and boost your chances
-              of landing your dream job.
-            </p>
+              <div className="space-y-4">
+                <h2 className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
+                  AI-Powered Resume Feedback
+                </h2>
 
-            {/* CTA Button */}
-            <motion.div
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onHoverStart={() => setIsHovering(true)}
-              onHoverEnd={() => setIsHovering(false)}
-              className="mb-16"
-            >
-              <Button size="lg">
-                <motion.span className="mr-2 flex items-center transition-transform duration-200 group-hover:scale-101">
-                  <Upload className="mr-2 h-5 w-5" />
-                  Upload Resume & Get Feedback
-                </motion.span>
-              </Button>
-            </motion.div>
+                <p className="text-xl text-muted-foreground">
+                  Get instant feedback, optimize your resume, and boost your
+                  chances of landing your dream job.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <MetricCard
+                  title="ATS Score"
+                  percentage={95}
+                  icon={<FileText className="h-4 w-4 text-chart1" />}
+                  color="chart1"
+                />
+                <MetricCard
+                  title="Keyword Match"
+                  percentage={88}
+                  icon={<CheckCircle className="h-4 w-4 text-chart2" />}
+                  color="chart2"
+                />
+                <MetricCard
+                  title="Impact Score"
+                  percentage={92}
+                  icon={<Award className="h-4 w-4 text-chart3" />}
+                  color="chart3"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
