@@ -39,7 +39,7 @@ export const generateMetadata = (): Metadata => ({
     locale: "en_US",
     images: [
       {
-        url: "/og-image.png",
+        url: "https://resumeai.simicdev.com/opengraph-image.png",
         width: 1200,
         height: 630,
         alt: "ResumeAnalyzer preview",
@@ -51,7 +51,7 @@ export const generateMetadata = (): Metadata => ({
     title: "ResumeAnalyzer - AI-Powered Resume Feedback",
     description:
       "Optimize your resume with AI insights and improve your job prospects.",
-    images: ["/twitter-image.png"],
+    images: ["https://resumeai.simicdev.com/twitter-image.png"],
     creator: "@resumeanalyzer",
     site: "@resumeanalyzer",
   },
