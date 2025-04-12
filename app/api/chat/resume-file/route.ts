@@ -4,7 +4,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { WebPDFLoader } from "@langchain/community/document_loaders/web/pdf";
 
-export const runtime = "edge";
+// export const runtime = "edge";
 
 const TEMPLATE = `
 Analyze the provided resume and evaluate its quality based on clarity, relevance, grammar, and additional criteria:
