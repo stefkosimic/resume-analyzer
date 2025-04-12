@@ -2,11 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { ChatOpenAI } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
-import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
-import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
-import { Buffer } from "buffer";
+import { WebPDFLoader } from "@langchain/community/document_loaders/web/pdf";
 
-// export const runtime = "edge";
+export const runtime = "edge";
 
 const TEMPLATE = `
 Analyze the provided resume and evaluate its quality based on clarity, relevance, grammar, and additional criteria:
@@ -103,22 +101,17 @@ export async function POST(req: NextRequest) {
 
     // Handle different file types
     if (file.type === "application/pdf") {
-      const pdfLoader = new PDFLoader(new Blob([buffer]), {
+      const pdfLoader = new WebPDFLoader(new Blob([buffer]), {
         splitPages: false,
       });
       const docs = await pdfLoader.load();
-      inputText = docs.map((doc) => doc.pageContent).join("\n");
-    } else if (
-      file.type ===
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    ) {
-      const docxLoader = new DocxLoader(new Blob([buffer]));
-      const docs = await docxLoader.load();
-      inputText = docs.map((doc) => doc.pageContent).join("\n");
+      inputText = docs
+        .map((doc: { pageContent: string }) => doc.pageContent)
+        .join("\n");
     } else {
       return NextResponse.json(
         {
-          message: "Unsupported file type. Please upload PDF or DOCX.",
+          message: "Unsupported file type. Please upload a PDF file.",
           clarity: 0,
           relevance: 0,
           grammar: 0,
@@ -155,9 +148,9 @@ export async function POST(req: NextRequest) {
 
     const prompt = PromptTemplate.fromTemplate(TEMPLATE);
     const model = new ChatOpenAI({
-      temperature: 0.8,
+      temperature: 0.2,
       model: "gpt-4o-mini",
-      maxTokens: 400,
+      maxTokens: 1000,
     });
 
     const functionCallingModel = model.withStructuredOutput(schema, {

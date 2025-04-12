@@ -146,19 +146,21 @@ export default function ResumeAnalyzerJumbotron() {
 
               {selectedFile && (
                 <motion.div
-                  className="mt-6 space-y-4"
+                  className="mt-6 space-y-4 w-full"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ type: "spring", stiffness: 200 }}
                 >
-                  <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                    <div>
-                      <p className="font-medium">{selectedFile.name}</p>
+                  <div className="flex items-center justify-between p-4 bg-muted/50 gap-4 rounded-lg">
+                    <div className="w-full overflow-hidden">
+                      <p className="font-medium truncate">
+                        {selectedFile.name}
+                      </p>
                       <p className="text-sm text-muted-foreground">
                         {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                       </p>
                     </div>
-                    <div className="flex gap-2 items-center">
+                    <div className="flex gap-2 items-center shrink-0">
                       <motion.div
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
