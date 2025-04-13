@@ -1,15 +1,7 @@
-import { Public_Sans } from "next/font/google";
 import { Metadata } from "next";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 // components
-import { Toaster } from "@/components/ui/sonner";
-import { ThemeProvider } from "@/components/theme-provider";
-import { ResumeProvider } from "@/contexts/resume-context";
-import { AuthProvider } from "@/contexts/auth-context";
-import "./globals.css";
-
-const publicSans = Public_Sans({ subsets: ["latin"] });
+import { Navbar } from "@/components/Navbar";
 
 export const generateMetadata = (): Metadata => ({
   title: "ResumeAnalyzer - AI-Powered Resume Feedback",
@@ -69,29 +61,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <meta name="apple-mobile-web-app-title" content="ResumeAI" />
-      </head>
-      <body className={publicSans.className}>
-        <NuqsAdapter>
-          <ThemeProvider
-            defaultTheme="dark"
-            themes={["light", "dark"]}
-            attribute="class"
-            enableSystem={true}
-          >
-            <AuthProvider>
-              <ResumeProvider>
-                <div className="relative min-h-screen flex flex-col">
-                  <main className="flex-1">{children}</main>
-                  <Toaster />
-                </div>
-              </ResumeProvider>
-            </AuthProvider>
-          </ThemeProvider>
-        </NuqsAdapter>
-      </body>
-    </html>
+    <div>
+      <Navbar />
+      <main className="flex-1">{children}</main>
+    </div>
   );
 }

@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+- When creating UI components, always first look for shadcn components and install them, if there's none, ask me first if you should proceed with creating
